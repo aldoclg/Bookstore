@@ -1,0 +1,11 @@
+package com.bookstore.application.dtos;
+
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class LoyaltyPointsDto {
+
+    private Long loyaltyPoints;
+}

@@ -1,0 +1,36 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /bookstore
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  datasource:
+    platform: h2
+    show_sql: true
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;
+    driverClassName: org.h2.Driver
+    Customername: sa
+    auto-commit: false
+    schema: classpath:schema-h2.sql
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show_sql: true
+    hibernate:
+      ddl-auto: validate
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        order_updates: true
+        batch_versioned_data: true
+  h2:
+    console:
+      path: /h2-console
+      settings.trace: true
+      enabled: true
+
+#logging.level.org: TRACE
