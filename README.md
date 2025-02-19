@@ -39,7 +39,7 @@ __url__:  `localhost:8081/bookstore/v1`
 
 ```shell
 curl --request POST \
-  --url http://localhost:8081/bookstore/customers/{customer_id}/purchases \
+  --url http://localhost:8081/bookstore/v1/customers/{customer_id}/purchases \
   --header 'Content-Type: application/json' \
   --data '{
 	"data": [
@@ -68,7 +68,7 @@ curl --request POST \
 ### Curl
 
 ```shell
-curl --request GET --header "Accept: application/json" http://localhost:8081/bookstore/customers/{customer_id}/loyalty-points 
+curl --request GET --header "Accept: application/json" http://localhost:8081/bookstore/v1/customers/{customer_id}/loyalty-points 
 ```
 
 ## Returning the books available to purchase
@@ -91,7 +91,7 @@ curl --request GET --header "Accept: application/json" http://localhost:8081/boo
 
 ```shell
 curl --request GET \
-  --url 'http://localhost:8081/bookstore/books?page=0&size=100' \
+  --url 'http://localhost:8081/bookstore/v1/books?page=0&size=100' \
   --header 'Content-Type: application/json'
 ```
 
