@@ -12,9 +12,12 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 @AllArgsConstructor
@@ -47,7 +50,7 @@ public class PurchaseUseCase {
             isEmptyThrowsException(bookOptional, "Book not found");
 
             var book = bookOptional.get();
-            purchaseAmountBiggerThanBookAmountThrowsException(purchaseDto, book);
+            purchaseInvalidAmountThrowsException(purchaseDto, book);
 
             var amount = purchaseDto.getAmount();
             book.setAmount(book.getAmount() - amount);
@@ -56,8 +59,8 @@ public class PurchaseUseCase {
             var bookType = book.getType().getName();
             if (!hasBeenAppliedDiscount && purchaseDto.isApplyDiscount() && bookType.hasDiscount(customer.getLoyaltyPoints())) {
                 log.info("Discount applied");
+                amount = amount - 1;
                 hasBeenAppliedDiscount = true;
-                continue;
             }
 
             var bookPrice = book.getPrice();
@@ -78,12 +81,12 @@ public class PurchaseUseCase {
         log.info("Update loyalty points");
         customerGateway.save(customer);
 
-        return PriceDto.builder().price(totalPrice).build();
+        return PriceDto.builder().price(roundToTwo(totalPrice)).build();
     }
 
-    private void purchaseAmountBiggerThanBookAmountThrowsException(PurchaseDto purchaseDto, Book book) throws ValueErrorException {
-        if (purchaseDto.getAmount() > book.getAmount()) {
-            log.error("Amount required is bigger than amount available");
+    private void purchaseInvalidAmountThrowsException(PurchaseDto purchaseDto, Book book) throws ValueErrorException {
+        if (purchaseDto.getAmount() > book.getAmount() || purchaseDto.getAmount() < 1) {
+            log.error("Amount required is invalida: " + purchaseDto.getAmount());
             throw new ValueErrorException("Amount required is bigger than amount available");
         }
     }
@@ -93,6 +96,12 @@ public class PurchaseUseCase {
             log.error(errorMessage);
             throw new NotFoundException(errorMessage);
         }
+    }
+
+    private static double roundToTwo(double value) {
+        var v = BigDecimal.valueOf(value);
+        v = v.setScale(2, RoundingMode.HALF_UP);
+        return v.doubleValue();
     }
 
 }

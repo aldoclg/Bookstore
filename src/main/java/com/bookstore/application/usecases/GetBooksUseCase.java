@@ -24,6 +24,7 @@ public class GetBooksUseCase {
                 .bookId(b.getBookId())
                 .name(b.getName())
                 .price(b.getPrice())
+                .type(b.getType().getName())
                 .build())
                 .toList();
     }

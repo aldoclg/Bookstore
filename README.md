@@ -13,11 +13,11 @@
 
 # Endpoints
 
-__url__:  `localhost:8081/bookstore/`
+__url__:  `localhost:8081/bookstore/v1`
 
 ## Buying one or several books and calculating the price
 
-__POST__ `/customers/{customer_id}/purchases`
+## [POST] ../customers/{customer_id}/purchases
 
 ### Path parameters
 
@@ -54,7 +54,7 @@ curl --request POST \
 
 ## Returning the loyalty points
 
-__GET__ /customers/{customer_id}/loyalty-points
+## [GET] ../customers/{customer_id}/loyalty-points
 
 ### Path parameters
 
@@ -73,7 +73,7 @@ curl --request GET --header "Accept: application/json" http://localhost:8081/boo
 
 ## Returning the books available to purchase
 
-__GET__ /books?page=0&size=100
+## [GET] ../books?page=0&size=100
 
 ### Query parameters
 
@@ -94,3 +94,61 @@ curl --request GET \
   --url 'http://localhost:8081/bookstore/books?page=0&size=100' \
   --header 'Content-Type: application/json'
 ```
+
+## ER Diagram
+
+```mermaid
+erDiagram
+    
+    CUSTOMERS {
+        long customer_id PK
+        long loyalty_points
+    }
+
+    TYPES {
+        long type_id PK
+        string name
+    }
+
+    BOOKS {
+        long book_id PK
+        string name
+        long type_id FK
+        float price
+        long amount
+    }
+
+    BOOKS }|--|{TYPES: is
+```
+
+## Connect to database
+
+__url__: `http://localhost:8081/bookstore/h2-console/`
+
+- **JBDC_URL**: jdbc:h2:mem:testdb
+- **User Name**: sa
+
+
+# Explanations
+
+## Software Design
+
+As software design was adopted the clean architecture that provides many benefits as separation of concerns where each layer has a specific responsibility.
+
+## Database
+
+As database was adopted H2 database because it is an in-memory database that works embedded within the Java application and supports many SQL standards.
+
+## Spring boot
+
+Spring boot provides many features  and integrations and simplified setup that speeds up the development and, it offers testing support.
+
+
+## Business Rules
+
+
+### loyalty points and book types
+
+- First all, I decide to give to the customer the decision of using or not the loyalty points instead of applying automatically because I think it up to the customer decides in which book might be free
+- The scenario when the customer decides to use his loyalty points does not affect the discount by book type because the list of requirements does not point out that.
+- When the customer decides to use the loyalty points, but it is not enough any error is sent out and the price is returned without consider the loyalty points.
